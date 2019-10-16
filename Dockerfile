@@ -1,12 +1,10 @@
-FROM alpine:3.6
-
-MAINTAINER R.Smit <reimertsmit@gmail.com>
+FROM alpine:3
 
 ######################
 # ENVIRONMENT
 ######################
 
-ENV NGINX_VERSION 1.13.2
+ENV NGINX_VERSION 1.16.1
 
 ######################
 # nginx User
@@ -20,7 +18,7 @@ RUN addgroup -S nginx && adduser -S -g nginx nginx
 
 WORKDIR /tmp/nginx
 
-RUN apk update && apk add vim curl openssl-dev pcre-dev zlib-dev build-base && \
+RUN apk update && apk upgrade && apk add vim curl openssl-dev pcre-dev zlib-dev build-base && \
     curl -O http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
     tar -xzvf nginx-${NGINX_VERSION}.tar.gz
 
