@@ -1,10 +1,10 @@
-FROM alpine:3
+FROM alpine:3.12
 
 ######################
 # ENVIRONMENT
 ######################
 
-ENV NGINX_VERSION 1.16.1
+ENV NGINX_VERSION 1.19.2
 
 ######################
 # nginx User
@@ -18,9 +18,15 @@ RUN addgroup -S nginx && adduser -S -g nginx nginx
 
 WORKDIR /tmp/nginx
 
-RUN apk update && apk upgrade && apk add vim curl openssl-dev pcre-dev zlib-dev build-base && \
+RUN apk update && apk upgrade --no-cache && apk add --no-cache git vim curl openssl-dev pcre-dev zlib-dev build-base && \
     curl -O http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
     tar -xzvf nginx-${NGINX_VERSION}.tar.gz
+
+######################
+# Download Broli nginx modules
+######################
+WORKDIR /tmp/nginx/brotli
+RUN git clone --recursive https://github.com/google/ngx_brotli.git
 
 ######################
 # Modify nginx header src file
@@ -73,7 +79,8 @@ RUN ./configure \
         --with-stream \
         --with-stream_realip_module \
         --with-stream_ssl_module \
-        --with-stream_ssl_preread_module && \
+        --with-stream_ssl_preread_module \
+        --add-module=/tmp/nginx/brotli/ngx_brotli && \
     make && make install
 
 ######################
@@ -89,6 +96,8 @@ WORKDIR /etc/nginx
 # NGINX Config File
 ######################
 
+RUN mkdir -p /etc/nginx/conf.d/
+
 COPY ./nginx.conf /etc/nginx/conf
 
 COPY ./index.html /etc/nginx/html
@@ -99,8 +108,7 @@ COPY ./50x.html /etc/nginx/html
 ######################
 
 
-RUN apk del build-base && \
-    rm -rf /var/cache/apk && \
+RUN apk del build-base git && \
     rm -rf /tmp/nginx
 
 EXPOSE 80 443
