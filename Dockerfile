@@ -1,10 +1,10 @@
-FROM alpine:3.13
+FROM alpine:latest
 
 ######################
 # ENVIRONMENT
 ######################
 
-ENV NGINX_VERSION 1.19.6
+ENV NGINX_VERSION 1.20.1
 
 ######################
 # nginx User
