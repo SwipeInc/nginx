@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) Igor Sysoev
  * Copyright (C) Nginx, Inc.
@@ -194,6 +195,10 @@ ngx_http_header_filter(ngx_http_request_t *r)
             r->headers_out.last_modified_time = -1;
             r->headers_out.last_modified = NULL;
         }
+    }
+
+    if (r->keepalive && (ngx_terminate || ngx_exiting)) {
+        r->keepalive = 0;
     }
 
     len = sizeof("HTTP/1.x ") - 1 + sizeof(CRLF) - 1
