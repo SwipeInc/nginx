@@ -1,5 +1,5 @@
 #! /bin/bash
-VERSION=1.27.2-brotli
+VERSION=1.27.4-brotli
 
 aws ecr get-login-password --region af-south-1 --profile ccba | docker login --username AWS --password-stdin 194083492183.dkr.ecr.af-south-1.amazonaws.com
 
